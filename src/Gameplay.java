@@ -47,8 +47,8 @@ public class Gameplay extends JPanel implements KeyListener {
 		usedLetters = new ArrayList<>(30);
 		
 		loadImages();
-		
-		/* HINT add reset button
+
+		/* TODO add reset button
 		resetButton = new JButton("RESET");
 		resetButton.setBounds(0, 0, 80, 30);
 		resetButton.setVisible(true);
@@ -57,7 +57,6 @@ public class Gameplay extends JPanel implements KeyListener {
 		
 	@Override
 	public void paint(Graphics g) {
-		
 		if(!play && !charTyped)	{	// no letter has been typed yet
 			g.drawImage(background, 0, 0, null);
 			drawBottomString("Set word and press [ENTER] to start", g);
