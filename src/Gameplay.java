@@ -1,3 +1,11 @@
+/**************************************************
+ * Rules and executions for the game.
+ *
+ * You have to guess the secret word and have 8 tries to do so.
+ * Only letters like A-Z,Ä,Ö,Ü,ß are allowed.
+ * Pressing 'ESC' or 'R' will reset the round.
+ **************************************************/
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -52,15 +60,15 @@ public class Gameplay extends JPanel implements KeyListener {
 		
 		if(!play && !charTyped)	{	// no letter has been typed yet
 			g.drawImage(background, 0, 0, null);
-			drawBottomString("Set word and press [ENTER] to start", Color.GRAY, g);
+			drawBottomString("Set word and press [ENTER] to start", g);
 		} else if(!play) {		// at least one letter was typed
 			g.drawImage(background, 0, 0, null);
 			
 			/* display typed letters */
-			String str = "";
+			StringBuilder str = new StringBuilder();
 			for(Character c : letters)
-				str += c.toString();
-			drawBottomString(str, Color.GRAY, g);
+				str.append(c.toString());
+			drawBottomString(str.toString(), g);
 		} else if(charTyped) {		// to be guessed word was entered
 			g.drawImage(background, 0, 0, null);
 			
@@ -76,36 +84,34 @@ public class Gameplay extends JPanel implements KeyListener {
 			/* display already used letters */
 			drawUsedLetters(g);
 						
-			if(gameOver == false) {		// display covered and uncovered letters
-				String str = "";
-				for(int i = 0; i < uncover.length; i++)
-					if(uncover[i] == null)
-						str += "*";
-					else str += uncover[i].toString();
-				drawBottomString(str, Color.GRAY, g);
+			if (!gameOver) {		// display covered and uncovered letters
+				StringBuilder str = new StringBuilder();
+				for (Character character : uncover)
+					if (character == null)
+						str.append("*");
+					else str.append(character.toString());
+				drawBottomString(str.toString(), g);
 			} else {		// reveal remaining covered letters in case of a lost			
-				String helpStr = "";
-				for(int i = 0; i < letters.size(); i++)
-					helpStr += letters.get(i).toString();
-				int xStr = getXStr(helpStr, g);
+				StringBuilder helpStr = new StringBuilder();
+				for (Character letter : letters) helpStr.append(letter.toString());
+				int xStr = getXStr(helpStr.toString(), g);
 				
-				String str = "";
+				StringBuilder str = new StringBuilder();
 				for(int i = 0; i < uncover.length; i++) {
-					for(int j = i; j > 0; j--)
-						str += " ";
+					str.append(" ".repeat(i));
 					if(uncover[i] == null) {
-						str += letters.get(i).toString();
-						reveal(str, Color.RED, xStr, g);
-						str = "";
+						str.append(letters.get(i).toString());
+						reveal(str.toString(), Color.RED, xStr, g);
+						str = new StringBuilder();
 					} else {							
-						str += uncover[i].toString();
-						reveal(str, Color.GRAY, xStr, g);
-						str = "";
+						str.append(uncover[i].toString());
+						reveal(str.toString(), Color.GRAY, xStr, g);
+						str = new StringBuilder();
 					}
 				}
 								
 				/* display GAME OVER text*/
-				String gameOverStr = null;
+				String gameOverStr;
 				String pressToRestart = "Press [R] to restart";
 				
 				g.setFont(new Font(Font.MONOSPACED, Font.BOLD, 35));
@@ -141,11 +147,10 @@ public class Gameplay extends JPanel implements KeyListener {
 	}
 		
 	/** 
-	 * @param str ... text to be drawn at the bottom of the screen 
-	 * @return x position of the first letter
+	 * @param str ... text to be drawn at the bottom of the screen
 	 */
-	private void drawBottomString(String str, Color c, Graphics g) {
-		g.setColor(c);
+	private void drawBottomString(String str, Graphics g) {
+		g.setColor(Color.GRAY);
 		g.setFont(new Font(Font.MONOSPACED, Font.BOLD, 25));
 		FontMetrics fm = g.getFontMetrics();
 		int x = (getWidth() - fm.stringWidth(str)) / 2;
@@ -170,41 +175,41 @@ public class Gameplay extends JPanel implements KeyListener {
 		FontMetrics fm = g.getFontMetrics();
 		int x = (int)(getWidth()*0.97);
 		int y = (int)(getHeight()*0.15);
-		
-		String help = "";
-		if(usedLetters.size() > 0 || usedLetters.size() > 6) {
+
+		/* display only 6 letters in each line */
+		StringBuilder help = new StringBuilder();
+		if(usedLetters.size() != 0) {
 			for(int i = 0; i < usedLetters.size() && i < 6; i++)
-				help += usedLetters.get(i).toString() + " ";
-			g.drawString(help, x-fm.stringWidth(help), y);
-			help = "";
+				help.append(usedLetters.get(i).toString()).append(" ");
+			g.drawString(help.toString(), x-fm.stringWidth(help.toString()), y);
+			help = new StringBuilder();
 		}
-		if(usedLetters.size() > 6 || usedLetters.size() > 12) {
+		if(usedLetters.size() > 6) {
 			for(int i = 6; i < usedLetters.size() && i < 12; i++)
-				help += usedLetters.get(i).toString() + " ";
+				help.append(usedLetters.get(i).toString()).append(" ");
 			y += fm.getHeight()*0.75;
-			g.drawString(help, x-fm.stringWidth(help), y);
-			help = "";
+			g.drawString(help.toString(), x-fm.stringWidth(help.toString()), y);
+			help = new StringBuilder();
 		}
-		if(usedLetters.size() > 12 || usedLetters.size() > 18) {
+		if(usedLetters.size() > 12) {
 			for(int i = 12; i < usedLetters.size() && i < 18; i++)
-				help += usedLetters.get(i).toString() + " ";
+				help.append(usedLetters.get(i).toString()).append(" ");
 			y += fm.getHeight()*0.75;
-			g.drawString(help, x-fm.stringWidth(help), y);
-			help = "";
+			g.drawString(help.toString(), x-fm.stringWidth(help.toString()), y);
+			help = new StringBuilder();
 		}
-		if(usedLetters.size() > 18 || usedLetters.size() > 24) {
+		if(usedLetters.size() > 18) {
 			for(int i = 18; i < usedLetters.size() && i < 24; i++)
-				help += usedLetters.get(i).toString() + " ";
+				help.append(usedLetters.get(i).toString()).append(" ");
 			y += fm.getHeight()*0.75;
-			g.drawString(help, x-fm.stringWidth(help), y);
-			help = "";
+			g.drawString(help.toString(), x-fm.stringWidth(help.toString()), y);
+			help = new StringBuilder();
 		}
 		if(usedLetters.size() > 24) {
 			for(int i = 24; i < usedLetters.size(); i++)
-				help += usedLetters.get(i).toString() + " ";
+				help.append(usedLetters.get(i).toString()).append(" ");
 			y += fm.getHeight()*0.75;
-			g.drawString(help, x-fm.stringWidth(help), y);
-			help = "";
+			g.drawString(help.toString(), x-fm.stringWidth(help.toString()), y);
 		}
 	}
 	
@@ -256,34 +261,31 @@ public class Gameplay extends JPanel implements KeyListener {
 		if(tries == 4) return;
 		
 		/* 5th false guess */
-		final short width5 = 30;
-		final short height5 = width5;
-		x += width4/2 - width5/2;
+		final short width_height5 = 30;
+		x += width4/2 - width_height5/2;
 		y += height4;
-		g.drawImage(gallows5, x, y, width5, height5, null);
+		g.drawImage(gallows5, x, y, width_height5, width_height5, null);
 		if(tries == 5) return;
 		
 		/* 6th false guess */
 		final short width6 = 3;
 		final short height6 = 40;
-		x += width5/2 - width6/2;
-		y += height5;
+		x += width_height5/2 - width6/2;
+		y += width_height5;
 		g.fillRect(x, y, width6, height6);
 		if(tries == 6) return;
 		
 		/* 7th false guess */
-		final short widthBodyParts = 15;
-		final short heightBodyParts = widthBodyParts;
+		final short width_height_BodyParts = 15;
 		x += width6/2;
-		g.drawImage(gallowsLeft, x - widthBodyParts, (int)(y + y*0.05), widthBodyParts, heightBodyParts, null);
-		g.drawImage(gallowsRight, x, (int)(y + y*0.05), widthBodyParts, heightBodyParts, null);
+		g.drawImage(gallowsLeft, x - width_height_BodyParts, (int)(y + y*0.05), width_height_BodyParts, width_height_BodyParts, null);
+		g.drawImage(gallowsRight, x, (int)(y + y*0.05), width_height_BodyParts, width_height_BodyParts, null);
 		if(tries == 7) return;
 		
 		/* 8th false guess */
 		y += height6;
-		g.drawImage(gallowsLeft, x - widthBodyParts, y, widthBodyParts, heightBodyParts, null);
-		g.drawImage(gallowsRight, x, y, widthBodyParts, heightBodyParts, null);
-		if(tries == 8) return;
+		g.drawImage(gallowsLeft, x - width_height_BodyParts, y, width_height_BodyParts, width_height_BodyParts, null);
+		g.drawImage(gallowsRight, x, y, width_height_BodyParts, width_height_BodyParts, null);
 	}
 	
 	/** imports all required images */
@@ -319,18 +321,18 @@ public class Gameplay extends JPanel implements KeyListener {
 	
 	@Override
 	public void keyTyped(KeyEvent e) {
-		if(charTyped == false && e.getKeyChar() != KeyEvent.VK_ENTER && e.getKeyChar() != KeyEvent.VK_BACK_SPACE && e.getKeyChar() != KeyEvent.VK_ESCAPE) {		
+		if(!charTyped && e.getKeyChar() != KeyEvent.VK_ENTER && e.getKeyChar() != KeyEvent.VK_BACK_SPACE && e.getKeyChar() != KeyEvent.VK_ESCAPE) {
 			charTyped = true;
 			keyTyped(e);
-		} else if(play == false && charTyped && e.getKeyChar() == KeyEvent.VK_BACK_SPACE) {		// removes last letter from array
+		} else if(!play && charTyped && e.getKeyChar() == KeyEvent.VK_BACK_SPACE) {		// removes last letter from array
 			letters.remove(letters.size()-1);
 			if(letters.size() == 0)
 				charTyped = false;
 			repaint();
-		} else if(play == false && charTyped && (Character.isAlphabetic(e.getKeyChar()) || e.getKeyChar() == KeyEvent.VK_SPACE) && e.getKeyChar() != KeyEvent.VK_ENTER && letters.size() < 39) {		// adds typed letters and space to array
+		} else if(!play && charTyped && (Character.isAlphabetic(e.getKeyChar()) || e.getKeyChar() == KeyEvent.VK_SPACE) && e.getKeyChar() != KeyEvent.VK_ENTER && letters.size() < 39) {		// adds typed letters and space to array
 			letters.add(Character.toUpperCase(e.getKeyChar()));
 			repaint();
-		} else if(play && gameOver == false && !usedLetters.contains(Character.toUpperCase(e.getKeyChar())) && Character.isAlphabetic(e.getKeyChar()) && e.getKeyChar() != KeyEvent.VK_ENTER) {		// guessing has started
+		} else if(play && !gameOver && !usedLetters.contains(Character.toUpperCase(e.getKeyChar())) && Character.isAlphabetic(e.getKeyChar()) && e.getKeyChar() != KeyEvent.VK_ENTER) {		// guessing has started
 			guess = Character.toUpperCase(e.getKeyChar());
 			repaint();
 		}
@@ -338,7 +340,7 @@ public class Gameplay extends JPanel implements KeyListener {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if(play == false && charTyped && e.getKeyCode() == KeyEvent.VK_ENTER) {		// start to guess
+		if(!play && charTyped && e.getKeyCode() == KeyEvent.VK_ENTER) {		// start to guess
 			play = true;
 			uncover = new Character[letters.size()];
 			for(int i = 0; i < letters.size(); i++) {
@@ -346,14 +348,14 @@ public class Gameplay extends JPanel implements KeyListener {
 					uncover[i] = ' ';
 			}
 			repaint();
-		} else if(play && gameOver == false && guess != null && e.getKeyCode() == KeyEvent.VK_ENTER) {		// guessing	
-			/** add letter to already used letters array */
+		} else if(play && !gameOver && guess != null && e.getKeyCode() == KeyEvent.VK_ENTER) {		// guessing
+			/* add letter to already used letters array */
 			usedLetters.add(guess);
 			
 			if(!letters.contains(guess)) {		// wrong guess
 				tries++;
 				
-				/** GAME OVER - no more tries left */
+				/* GAME OVER - no more tries left */
 				if(tries == 8)
 					gameOver = true;
 			} else {		// right guess
@@ -361,7 +363,7 @@ public class Gameplay extends JPanel implements KeyListener {
 					if(letters.get(i).equals(guess))
 						uncover[i] = guess;
 				
-				/** checks if every letter was uncovered */
+				/* checks if every letter was uncovered */
 				for(int i = 0; i < uncover.length; i++)
 					if(uncover[i] == null)
 						break;

@@ -1,21 +1,23 @@
 /**************************************************
- * Hangman
- * 
- * @author Quoc Duy Do
- * @version 1.1 30.July 2019
-**************************************************/
+ * PROJECT: Hangman
+ * USER: Quoc Duy Do
+ * VERSION: 1.2
+ * LAST UPDATE: 24-Aug-19
+
+ * DESCRIPTION: Hangman-Game
+ * COMING SOON: Scores
+ **************************************************/
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
 
 import javax.swing.JFrame;
 
-/** Main-Class */
 public class Main
 {
 	public static void main(String[] args)
     {
-		/** creates screen */
+		/* creates screen */
 		JFrame obj = new JFrame("Hangman");
 		Gameplay game = new Gameplay();
 		Dimension monitorSize = Toolkit.getDefaultToolkit().getScreenSize();
