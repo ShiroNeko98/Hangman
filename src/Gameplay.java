@@ -289,12 +289,12 @@ public class Gameplay extends JPanel implements KeyListener {
 	/** imports all required images */
 	private void loadImages() {
 		try {
-			background = ImageIO.read(new File("Resources/background.jpg"));
-			gallows1 = ImageIO.read(new File("Resources/gallows1.png"));
-			gallows3 = ImageIO.read(new File("Resources/gallows3.png"));
-			gallows5 = ImageIO.read(new File("Resources/gallows5.png"));
-			gallowsLeft = ImageIO.read(new File("Resources/gallowsLeft.png"));
-			gallowsRight = ImageIO.read(new File("Resources/gallowsRight.png"));
+			background = ImageIO.read(new File("resources/background.jpg"));
+			gallows1 = ImageIO.read(new File("resources/gallows1.png"));
+			gallows3 = ImageIO.read(new File("resources/gallows3.png"));
+			gallows5 = ImageIO.read(new File("resources/gallows5.png"));
+			gallowsLeft = ImageIO.read(new File("resources/gallowsLeft.png"));
+			gallowsRight = ImageIO.read(new File("resources/gallowsRight.png"));
 		} catch(IOException e) {
 			System.out.println("Image can't be found!");
 			System.exit(0);
